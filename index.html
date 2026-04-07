@@ -3,27 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cao Thiên Properties</title>
+    <title>Cao Thiên Properties - Quản lý khu vực</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700;800&display=swap');
-        body { font-family: 'Lexend', sans-serif; background-color: #f8fafc; }
-        .district-card { transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden; height: 180px; border-radius: 24px; display: flex; align-items: center; justify-content: center; }
-        .district-card svg { width: 85px; height: 85px; transition: 0.3s; z-index: 10; }
-        .district-card:hover svg { transform: scale(1.1); }
+        body { font-family: 'Lexend', sans-serif; background-color: #f8fafc; scroll-behavior: smooth; }
+        
+        /* Hiệu ứng thẻ Quận */
+        .district-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative; overflow: hidden; height: 180px; border-radius: 24px; display: flex; align-items: center; justify-content: center; }
+        .district-card:active { transform: scale(0.95); }
+        .district-card svg.icon-2d { width: 90px; height: 90px; transition: 0.3s; z-index: 10; opacity: 0.9; }
+        .district-card:hover svg.icon-2d { transform: scale(1.1) rotate(5deg); opacity: 1; }
+
+        /* Logo Header */
+        .logo-svg { height: 45px; width: auto; margin-right: 12px; }
+
+        /* Drawer & Modal */
         #filterDrawer { transition: transform 0.3s ease; transform: translateX(100%); }
         #filterDrawer.open { transform: translateX(0); }
+        .modal { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
         .hidden { display: none !important; }
     </style>
 </head>
 <body class="pb-20">
 
-    <div id="header-component"></div>
+    <div id="header-part"></div>
+    
+    <main id="main-content">
+        </main>
 
-    <main id="app-content"></main>
-
-    <div id="ui-components"></div>
+    <div id="ui-overlay-part"></div>
 
     <script src="app.js"></script>
 </body>
