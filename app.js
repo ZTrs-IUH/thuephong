@@ -1,6 +1,5 @@
-// --- 1. KHO DỮ LIỆU ICON SVG (Đảm bảo không lỗi hình) ---
+// --- 1. KHO DỮ LIỆU ICON SVG 2D (Cho các quận) ---
 const ICONS = {
-    logo: `<svg class="logo-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"><path d="M100 50 C180 50, 250 120, 250 200 C250 280, 180 350, 100 350 L100 300 C150 300, 200 250, 200 200 C200 150, 150 100, 100 100 Z" fill="#8B5E3C"/><rect x="50" y="50" width="100" height="50" fill="#8B5E3C" rx="10"/><rect x="50" y="50" width="50" height="300" fill="#8B5E3C" rx="10"/><rect x="130" y="165" width="40" height="40" fill="#FBBF24" rx="4"/></svg>`,
     q1: `<svg class="icon-2d" viewBox="0 0 64 64" fill="white"><path d="M32 4L12 24V60H52V24L32 4Z" fill-opacity="0.3"/><path d="M32 2L35 12H29L32 2Z" fill="white"/><rect x="28" y="12" width="8" height="48" fill="white"/></svg>`,
     q3: `<svg class="icon-2d" viewBox="0 0 64 64" fill="white"><circle cx="32" cy="40" r="18" stroke="white" stroke-width="2" fill="none"/><rect x="30" y="10" width="4" height="20" fill="white"/><path d="M25 30H39" stroke="white" stroke-width="2"/></svg>`,
     q10: `<svg class="icon-2d" viewBox="0 0 64 64" fill="white"><ellipse cx="32" cy="32" rx="15" ry="18" fill="white" fill-opacity="0.4" stroke="white" stroke-width="2"/><line x1="32" y1="14" x2="32" y2="50" stroke="white" stroke-width="2"/></svg>`,
@@ -28,10 +27,13 @@ function initApp() {
 }
 
 function renderHeader() {
+    // NÍ THAY ĐƯỜNG DẪN ẢNH CỦA NÍ VÀO ĐÂY (VÍ DỤ 'logo.png')
+    const userLogoUrl = 'logo.png'; 
+
     document.getElementById('header-part').innerHTML = `
-        <nav class="bg-white shadow-sm sticky top-0 z-50 py-3 px-4 flex justify-between items-center border-b">
+        <nav class="bg-white shadow-sm sticky top-0 z-50 py-2 px-4 flex justify-between items-center border-b">
             <div onclick="renderHome()" class="flex items-center cursor-pointer">
-                ${ICONS.logo}
+                <img src="${userLogoUrl}" alt="Cao Thiên Properties Logo" class="logo-img">
                 <div class="font-extrabold text-xl text-blue-700 tracking-tighter uppercase italic">Cao Thiên Properties</div>
             </div>
             <a href="tel:0987848390" class="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-sm shadow-md active:scale-95 transition">
