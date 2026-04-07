@@ -3,61 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cao Thiên Properties</title>
+    <title>Cao Thiên Properties - Hệ Thống Phòng Trọ Uy Tín</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700;800&display=swap');
-        body { font-family: 'Lexend', sans-serif; background-color: #f8fafc; }
-        .district-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative; overflow: hidden; height: 180px; border-radius: 24px; display: flex; align-items: center; justify-content: center; }
-        .logo-img { height: 48px; width: auto; margin-right: 12px; }
-        #filterDrawer { transition: transform 0.3s ease; transform: translateX(100%); position: fixed; top: 0; right: 0; height: 100%; width: 300px; background: white; z-index: 70; padding: 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
-        #filterDrawer.open { transform: translateX(0); }
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); }
-        .modal-content { background: white; margin: 15vh auto; padding: 24px; width: 90%; max-width: 400px; border-radius: 24px; position: relative; }
-        .hidden { display: none !important; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .room-card { transition: transform 0.2s, box-shadow 0.2s; }
+        .room-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .badge-service { background: #f8fafc; border: 1px solid #e2e8f0; padding: 2px 8px; border-radius: 6px; font-size: 11px; color: #64748b; }
     </style>
 </head>
-<body class="pb-20">
+<body class="text-slate-900">
 
-    <nav class="bg-white shadow-sm sticky top-0 z-50 py-2 px-4 flex justify-between items-center border-b">
-        <div onclick="showHome()" class="flex items-center cursor-pointer">
-            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50?text=CT'">
-            <div class="font-extrabold text-lg text-blue-700 uppercase italic">Cao Thiên Properties</div>
-        </div>
-        <div class="flex items-center gap-2">
-            <button id="filterBtn" onclick="toggleDrawer()" class="bg-slate-100 text-slate-600 w-10 h-10 rounded-full hidden"><i class="fa-solid fa-sliders"></i></button>
-            <a href="tel:0987848390" class="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-xs shadow-lg">Gọi ngay</a>
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div onclick="showHome()" class="flex items-center cursor-pointer">
+                <img src="logo.png" alt="Logo" class="h-10 w-auto mr-3" onerror="this.src='https://via.placeholder.com/40'">
+                <span class="font-black text-xl text-blue-600 tracking-tight italic uppercase">Cao Thiên</span>
+            </div>
+            <a href="https://zalo.me/0987848390" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full font-bold text-sm transition shadow-md">Liên hệ Zalo</a>
         </div>
     </nav>
 
-    <section id="homePage" class="max-w-6xl mx-auto px-4 mt-8">
-        <h2 class="text-xl font-bold mb-6 border-l-4 border-blue-600 pl-4">Khu vực nổi bật</h2>
-        <div id="districtGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </section>
-
-    <section id="listPage" class="max-w-6xl mx-auto px-4 mt-6 hidden">
-        <div class="flex items-center justify-between mb-6">
-            <button onclick="showHome()" class="text-blue-600 font-bold"><i class="fa-solid fa-chevron-left"></i> Quay lại</button>
-            <h2 id="listTitle" class="font-bold uppercase italic text-slate-700 text-sm"></h2>
+    <header class="bg-white border-b border-slate-200 py-8 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-2xl md:text-4xl font-extrabold text-slate-800 mb-4">Tìm phòng trọ mơ ước của bạn</h1>
+            <div class="flex flex-wrap justify-center gap-3 mt-6" id="districtFilter">
+                </div>
         </div>
-        <div id="roomContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-    </section>
+    </header>
 
-    <div id="drawerOverlay" onclick="toggleDrawer()" class="fixed inset-0 bg-black/50 z-60 hidden"></div>
-    <div id="filterDrawer">
-        <h3 class="font-bold mb-6 border-b pb-2">Lọc theo giá</h3>
-        <input type="range" id="priceSlider" min="2000000" max="15000000" step="500000" value="15000000" class="w-full" oninput="updatePriceLabel(this.value)">
-        <p id="priceLabel" class="text-blue-600 font-black text-xl mt-2 text-center">15.000.000đ</p>
-        <button onclick="toggleDrawer()" class="w-full bg-blue-600 text-white py-3 rounded-xl mt-6 font-bold">XÁC NHẬN</button>
-    </div>
+    <main class="max-w-7xl mx-auto px-4 py-10">
+        <div class="flex justify-between items-center mb-8">
+            <h2 id="sectionTitle" class="text-xl font-bold text-slate-800">Tất cả phòng mới nhất</h2>
+            <div class="text-sm text-slate-500" id="roomCount">Đang tải...</div>
+        </div>
+        
+        <div id="roomGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            </div>
+    </main>
 
-    <div id="infoModal" class="modal">
-        <div class="modal-content shadow-2xl">
-            <span onclick="closeModal()" class="absolute top-3 right-5 text-2xl cursor-pointer">&times;</span>
-            <h3 id="mAddress" class="font-bold text-blue-700 border-b pb-3 mb-4 italic text-center text-sm"></h3>
-            <div id="mServices" class="space-y-2"></div>
-            <a href="https://zalo.me/0987848390" target="_blank" class="block text-center bg-sky-500 text-white font-bold py-3 rounded-xl mt-6">Nhắn Zalo Tư Vấn</a>
+    <div id="serviceModal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl scale-in">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 id="modalAddr" class="font-bold text-lg leading-tight">Địa chỉ phòng</h3>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-2xl">&times;</button>
+                </div>
+                <div class="space-y-3" id="modalDetail"></div>
+                <button onclick="window.location.href='tel:0987848390'" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl mt-6 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-phone"></i> Gọi tư vấn ngay
+                </button>
+            </div>
         </div>
     </div>
 
