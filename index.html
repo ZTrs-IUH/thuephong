@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cao Thiên Properties</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Lexend', sans-serif; background-color: #f8fafc; }
+        .district-card { transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden; height: 180px; border-radius: 24px; display: flex; align-items: center; justify-content: center; }
+        .district-card svg { width: 85px; height: 85px; transition: 0.3s; z-index: 10; }
+        .district-card:hover svg { transform: scale(1.1); }
+        #filterDrawer { transition: transform 0.3s ease; transform: translateX(100%); }
+        #filterDrawer.open { transform: translateX(0); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <div id="header-component"></div>
+
+    <main id="app-content"></main>
+
+    <div id="ui-components"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
