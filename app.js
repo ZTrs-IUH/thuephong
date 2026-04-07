@@ -1,45 +1,78 @@
-function renderListPage(districtId, districtName) {
-    // Lọc ra các phòng thuộc quận đã chọn
-    const filteredRooms = ROOM_DATA.filter(room => room.district === districtId);
+// app.js - Xử lý logic hiển thị
+let currentDistId = '';
 
-    let roomHtml = '';
-    if (filteredRooms.length === 0) {
-        roomHtml = `<div class="col-span-full text-center py-10 text-slate-400 italic">Hiện chưa có phòng tại khu vực này.</div>`;
-    } else {
-        filteredRooms.forEach(room => {
-            roomHtml += `
-                <div class="room-card bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-                    <img src="${room.image}" class="w-full h-56 object-cover">
-                    <div class="p-6">
-                        <span class="text-[10px] font-bold bg-blue-50 text-blue-600 px-3 py-1 rounded-full uppercase">${districtName}</span>
-                        <h3 class="font-bold text-lg mt-3 text-slate-800 italic">${room.address}</h3>
-                        <p class="text-orange-600 font-black text-2xl my-2">${(room.price / 1000000).toFixed(1)} Tr</p>
-                        <button onclick="openServiceModal('${room.id}')" class="w-full bg-slate-50 text-slate-700 py-3 rounded-2xl font-bold mt-2 border border-slate-100">Chi tiết dịch vụ</button>
-                    </div>
-                </div>`;
-        });
-    }
+function init() {
+    const grid = document.getElementById('districtGrid');
+    grid.innerHTML = DISTRICTS.map(d => `
+        <div onclick="showList('${d.id}', '${d.name}')" class="district-card ${d.color} shadow-lg">
+            ${d.icon}
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent flex items-end p-6">
+                <span class="text-white font-bold text-lg uppercase italic">${d.name}</span>
+            </div>
+        </div>
+    `).join('');
+}
 
-    document.getElementById('main-content').innerHTML = `
-        <section class="max-w-6xl mx-auto px-4 mt-6">
-            <div class="flex items-center gap-2 mb-6">
-                <button onclick="renderHome()" class="bg-blue-50 text-blue-600 font-bold p-3 rounded-2xl active:bg-blue-100">
-                    <i class="fa-solid fa-chevron-left mr-2"></i> Trở về
-                </button>
-                <h2 class="text-xl font-bold text-slate-800 uppercase italic">Khu vực ${districtName}</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                ${roomHtml}
-            </div>
-        </section>`;
+function showHome() {
+    document.getElementById('homePage').classList.remove('hidden');
+    document.getElementById('listPage').classList.add('hidden');
+    document.getElementById('filterBtn').classList.add('hidden');
     window.scrollTo(0,0);
 }
 
-// Hàm mở Modal xem phí dịch vụ
-function openServiceModal(roomId) {
-    const room = ROOM_DATA.find(r => r.id === roomId);
-    if(room) {
-        // Gọi hàm hiển thị Modal (ní có thể dùng lại hàm openModal cũ hoặc tạo mới tùy ý)
-        alert(`Phí dịch vụ tại ${room.address}:\n- Điện: ${room.services.dien}\n- Nước: ${room.services.nuoc}\n- Xe: ${room.services.xe}\n- Khác: ${room.services.khac}`);
+function showList(id, name) {
+    currentDistId = id;
+    document.getElementById('homePage').classList.add('hidden');
+    document.getElementById('listPage').classList.remove('hidden');
+    document.getElementById('filterBtn').classList.remove('hidden');
+    document.getElementById('listTitle').innerText = 'Khu vực ' + name;
+    renderRooms();
+}
+
+function renderRooms() {
+    const max = document.getElementById('priceSlider').value;
+    const container = document.getElementById('roomContainer');
+    const filtered = ROOMS.filter(r => r.dist === currentDistId && r.price <= max);
+    
+    if(filtered.length === 0) {
+        container.innerHTML = `<p class="col-span-full text-center text-slate-400 py-10 italic">Chưa có phòng phù hợp ở đây...</p>`;
+    } else {
+        container.innerHTML = filtered.map(r => `
+            <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                <img src="${r.img}" class="w-full h-44 object-cover">
+                <div class="p-4">
+                    <h3 class="font-bold text-slate-800 italic">${r.addr}</h3>
+                    <p class="text-orange-600 font-black text-xl my-2">${(r.price/1000000).toFixed(1)} Triệu</p>
+                    <button onclick="openModal(${r.id})" class="w-full bg-slate-50 py-2 rounded-xl text-sm font-bold border border-slate-100">Xem Dịch Vụ</button>
+                </div>
+            </div>
+        `).join('');
     }
 }
+
+function toggleDrawer() {
+    document.getElementById('filterDrawer').classList.toggle('open');
+    document.getElementById('drawerOverlay').classList.toggle('hidden');
+    renderRooms();
+}
+
+function updatePriceLabel(val) {
+    document.getElementById('priceLabel').innerText = parseInt(val).toLocaleString('vi-VN') + 'đ';
+}
+
+function openModal(id) {
+    const r = ROOMS.find(item => item.id === id);
+    document.getElementById('mAddress').innerText = r.addr;
+    document.getElementById('mServices').innerHTML = `
+        <div class="flex justify-between text-sm p-3 bg-slate-50 rounded-lg"><span>Điện:</span><span class="font-bold text-yellow-600">${r.s.d}</span></div>
+        <div class="flex justify-between text-sm p-3 bg-slate-50 rounded-lg"><span>Nước:</span><span class="font-bold text-blue-600">${r.s.n}</span></div>
+        <div class="flex justify-between text-sm p-3 bg-slate-50 rounded-lg"><span>Xe:</span><span class="font-bold text-red-600">${r.s.x}</span></div>
+        <div class="flex justify-between text-sm p-3 bg-slate-50 rounded-lg"><span>Phí khác:</span><span class="font-bold text-green-700">${r.s.k}</span></div>
+    `;
+    document.getElementById('infoModal').style.display = "block";
+}
+
+function closeModal() { document.getElementById('infoModal').style.display = "none"; }
+window.onclick = e => { if(e.target == document.getElementById('infoModal')) closeModal(); }
+
+init();

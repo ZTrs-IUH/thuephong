@@ -3,197 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cao Thiên Properties - Tìm Phòng Theo Khu Vực</title>
+    <title>Cao Thiên Properties</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700;800&display=swap');
-        body { font-family: 'Lexend', sans-serif; background-color: #f8fafc; scroll-behavior: smooth; }
-        
-        /* District Card */
+        body { font-family: 'Lexend', sans-serif; background-color: #f8fafc; }
         .district-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative; overflow: hidden; height: 180px; border-radius: 24px; display: flex; align-items: center; justify-content: center; }
-        .district-card:active { transform: scale(0.95); }
-        .district-card svg { width: 85px; height: 85px; transition: 0.3s; z-index: 10; opacity: 0.9; }
-        .district-card:hover svg { transform: scale(1.1) rotate(5deg); opacity: 1; }
-
-        /* Header & Logo */
-        .logo-img { height: 48px; width: auto; margin-right: 12px; object-fit: contain; }
-        
-        /* Drawer & Modal */
-        #filterDrawer { transition: transform 0.3s ease; transform: translateX(100%); }
+        .logo-img { height: 48px; width: auto; margin-right: 12px; }
+        #filterDrawer { transition: transform 0.3s ease; transform: translateX(100%); position: fixed; top: 0; right: 0; height: 100%; width: 300px; background: white; z-index: 70; padding: 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
         #filterDrawer.open { transform: translateX(0); }
-        .modal { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
-        .modal-content { background: white; margin: 15% auto; padding: 25px; width: 90%; max-width: 450px; border-radius: 28px; position: relative; }
-        
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); }
+        .modal-content { background: white; margin: 15vh auto; padding: 24px; width: 90%; max-width: 400px; border-radius: 24px; position: relative; }
         .hidden { display: none !important; }
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; background: #e2e8f0; border-radius: 10px; }
-        input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radius: 50%; background: #2563eb; -webkit-appearance: none; margin-top: -8px; border: 3px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     </style>
 </head>
-<body class="pb-20 text-slate-900">
+<body class="pb-20">
 
-    <nav class="bg-white shadow-sm sticky top-0 z-50 py-2 px-4 flex justify-between items-center border-b border-slate-100">
+    <nav class="bg-white shadow-sm sticky top-0 z-50 py-2 px-4 flex justify-between items-center border-b">
         <div onclick="showHome()" class="flex items-center cursor-pointer">
-            <img src="logo.png" alt="Logo" class="logo-img">
-            <div class="font-extrabold text-xl text-blue-700 tracking-tighter uppercase italic">Cao Thiên Properties</div>
+            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50?text=CT'">
+            <div class="font-extrabold text-lg text-blue-700 uppercase italic">Cao Thiên Properties</div>
         </div>
-        <div class="flex items-center gap-3">
-            <button id="searchBtn" onclick="toggleDrawer()" class="bg-slate-100 text-slate-600 w-10 h-10 rounded-full flex items-center justify-center hidden">
-                <i class="fa-solid fa-filter"></i>
-            </button>
-            <a href="tel:0987848390" class="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-sm shadow-md active:scale-95 transition">
-                <i class="fa-solid fa-phone mr-1"></i> Gọi ngay
-            </a>
+        <div class="flex items-center gap-2">
+            <button id="filterBtn" onclick="toggleDrawer()" class="bg-slate-100 text-slate-600 w-10 h-10 rounded-full hidden"><i class="fa-solid fa-sliders"></i></button>
+            <a href="tel:0987848390" class="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-xs shadow-lg">Gọi ngay</a>
         </div>
     </nav>
 
     <section id="homePage" class="max-w-6xl mx-auto px-4 mt-8">
-        <h2 class="text-2xl font-bold mb-6 text-slate-800 border-l-4 border-blue-600 pl-4">Khu vực nổi bật</h2>
-        <div id="district-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            </div>
+        <h2 class="text-xl font-bold mb-6 border-l-4 border-blue-600 pl-4">Khu vực nổi bật</h2>
+        <div id="districtGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </section>
 
     <section id="listPage" class="max-w-6xl mx-auto px-4 mt-6 hidden">
         <div class="flex items-center justify-between mb-6">
-            <button onclick="showHome()" class="bg-blue-50 text-blue-600 font-bold px-4 py-2 rounded-xl">
-                <i class="fa-solid fa-chevron-left mr-2"></i> Trở về
-            </button>
-            <h2 id="listTitle" class="text-xl font-bold text-slate-800 uppercase italic"></h2>
+            <button onclick="showHome()" class="text-blue-600 font-bold"><i class="fa-solid fa-chevron-left"></i> Quay lại</button>
+            <h2 id="listTitle" class="font-bold uppercase italic text-slate-700 text-sm"></h2>
         </div>
-        <div id="room-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            </div>
+        <div id="roomContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </section>
 
-    <div id="drawerOverlay" onclick="toggleDrawer()" class="fixed inset-0 bg-black/50 z-[60] hidden backdrop-blur-sm"></div>
-    <div id="filterDrawer" class="fixed top-0 right-0 h-full w-80 bg-white z-[70] shadow-2xl p-6">
-        <div class="flex justify-between items-center mb-8 border-b pb-4">
-            <h2 class="text-xl font-bold text-blue-700 uppercase italic">Bộ lọc giá</h2>
-            <button onclick="toggleDrawer()" class="text-slate-400 text-3xl">&times;</button>
-        </div>
-        <label class="block text-sm font-bold text-slate-500 mb-4 uppercase">Giá tối đa:</label>
-        <input type="range" id="priceSlider" min="3000000" max="20000000" step="500000" value="20000000" oninput="updatePriceLabel(this.value)">
-        <p id="priceLabel" class="text-blue-700 font-black text-2xl mt-4">20.000.000đ</p>
-        <button onclick="toggleDrawer()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg mt-8">ÁP DỤNG</button>
+    <div id="drawerOverlay" onclick="toggleDrawer()" class="fixed inset-0 bg-black/50 z-60 hidden"></div>
+    <div id="filterDrawer">
+        <h3 class="font-bold mb-6 border-b pb-2">Lọc theo giá</h3>
+        <input type="range" id="priceSlider" min="2000000" max="15000000" step="500000" value="15000000" class="w-full" oninput="updatePriceLabel(this.value)">
+        <p id="priceLabel" class="text-blue-600 font-black text-xl mt-2 text-center">15.000.000đ</p>
+        <button onclick="toggleDrawer()" class="w-full bg-blue-600 text-white py-3 rounded-xl mt-6 font-bold">XÁC NHẬN</button>
     </div>
 
     <div id="infoModal" class="modal">
         <div class="modal-content shadow-2xl">
-            <span onclick="closeModal()" class="absolute top-4 right-5 text-3xl cursor-pointer text-gray-400">&times;</span>
-            <h2 id="m-title" class="text-lg font-bold text-blue-700 border-b pb-4 mb-4 uppercase italic text-center"></h2>
-            <div class="space-y-3" id="m-services">
-                </div>
-            <a href="https://zalo.me/0987848390" target="_blank" class="block text-center bg-sky-500 text-white font-bold py-4 rounded-2xl mt-6">Liên hệ Zalo tư vấn</a>
+            <span onclick="closeModal()" class="absolute top-3 right-5 text-2xl cursor-pointer">&times;</span>
+            <h3 id="mAddress" class="font-bold text-blue-700 border-b pb-3 mb-4 italic text-center text-sm"></h3>
+            <div id="mServices" class="space-y-2"></div>
+            <a href="https://zalo.me/0987848390" target="_blank" class="block text-center bg-sky-500 text-white font-bold py-3 rounded-xl mt-6">Nhắn Zalo Tư Vấn</a>
         </div>
     </div>
 
-    <script>
-        // --- DATA QUẬN ---
-        const DISTRICTS = [
-            { id: 'q1', name: 'Quận 1', desc: 'Trung tâm Sài Gòn', color: 'bg-blue-600', icon: '<svg viewBox="0 0 64 64" fill="white"><path d="M32 4L12 24V60H52V24L32 4Z" fill-opacity="0.3"/><path d="M32 2L35 12H29L32 2Z" fill="white"/><rect x="28" y="12" width="8" height="48" fill="white"/></svg>' },
-            { id: 'q3', name: 'Quận 3', desc: 'Khu biệt thự cổ', color: 'bg-emerald-600', icon: '<svg viewBox="0 0 64 64" fill="white"><circle cx="32" cy="40" r="18" stroke="white" stroke-width="2" fill="none"/><rect x="30" y="10" width="4" height="20" fill="white"/></svg>' },
-            { id: 'q10', name: 'Quận 10', desc: 'Khu sầm uất', color: 'bg-orange-500', icon: '<svg viewBox="0 0 64 64" fill="white"><ellipse cx="32" cy="32" rx="15" ry="18" fill="white" fill-opacity="0.4" stroke="white" stroke-width="2"/><line x1="32" y1="14" x2="32" y2="50" stroke="white" stroke-width="2"/></svg>' },
-            { id: 'phu-nhuan', name: 'Phú Nhuận', desc: 'Thiên đường ăn uống', color: 'bg-lime-600', icon: '<svg viewBox="0 0 64 64" fill="white"><path d="M20 15V45M15 15V25M25 15V25M45 15C45 35 40 45 40 45V15" stroke="white" stroke-width="3" stroke-linecap="round" fill="none"/></svg>' },
-            { id: 'binh-thanh', name: 'Bình Thạnh', desc: 'Landmark 81', color: 'bg-cyan-600', icon: '<svg viewBox="0 0 64 64" fill="white"><rect x="28" y="5" width="8" height="55" fill="white"/><rect x="22" y="30" width="6" height="30" fill="white" fill-opacity="0.5"/><rect x="36" y="30" width="6" height="30" fill="white" fill-opacity="0.5"/></svg>' },
-            { id: 'go-vap', name: 'Gò Vấp', desc: 'Mua sắm giá rẻ', color: 'bg-purple-600', icon: '<svg viewBox="0 0 64 64" fill="white"><rect x="15" y="30" width="34" height="25" stroke="white" stroke-width="2" fill="none"/><path d="M12 30L18 15H46L52 30" stroke="white" stroke-width="2" fill="none"/></svg>' },
-            { id: 'tan-binh', name: 'Tân Bình', desc: 'Gần sân bay', color: 'bg-slate-500', icon: '<svg viewBox="0 0 64 64" fill="white"><path d="M10 35L55 15L40 35L55 55L10 35Z" fill="white" fill-opacity="0.5" stroke="white" stroke-width="2"/></svg>' }
-        ];
-
-        // --- DATA PHÒNG (NÍ CÓ THỂ THÊM Ở ĐÂY) ---
-        const ROOMS = [
-            { id: 1, dist: 'q1', addr: 'Cống Quỳnh, Q1', price: 8500000, img: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400', s: {d: '4k', n: '100k/ng', x: 'Free', k: 'DV: 150k'} },
-            { id: 2, dist: 'q3', addr: 'Lê Quý Đôn, Q3', price: 9500000, img: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=400', s: {d: '3.8k', n: '25k/m3', x: '150k', k: 'QL: 100k'} },
-            { id: 3, dist: 'binh-thanh', addr: 'Điện Biên Phủ, BT', price: 5800000, img: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400', s: {d: '4k', n: '100k/ng', x: 'Free', k: 'Giặt sấy chung'} },
-            { id: 4, dist: 'q10', addr: 'Sư Vạn Hạnh, Q10', price: 6500000, img: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400', s: {d: '4k', n: '150k/phòng', x: 'Free', k: 'Thang máy'} },
-            { id: 5, dist: 'go-vap', addr: 'Quang Trung, GV', price: 4200000, img: 'https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=400', s: {d: '3.5k', n: '100k/ng', x: 'Free', k: 'Giờ tự do'} }
-        ];
-
-        let currentDist = '';
-
-        // --- LOGIC HIỂN THỊ ---
-        function init() {
-            const grid = document.getElementById('district-grid');
-            grid.innerHTML = DISTRICTS.map(d => `
-                <div onclick="showList('${d.id}', '${d.name}')" class="district-card ${d.color} shadow-lg">
-                    ${d.icon}
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent flex items-end p-6">
-                        <div>
-                            <span class="text-white font-bold text-lg uppercase italic block">${d.name}</span>
-                            <span class="text-blue-100 text-[10px]">${d.desc}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function showHome() {
-            document.getElementById('homePage').classList.remove('hidden');
-            document.getElementById('listPage').classList.add('hidden');
-            document.getElementById('searchBtn').classList.add('hidden');
-            window.scrollTo(0,0);
-        }
-
-        function showList(distId, distName) {
-            currentDist = distId;
-            document.getElementById('homePage').classList.add('hidden');
-            document.getElementById('listPage').classList.remove('hidden');
-            document.getElementById('searchBtn').classList.remove('hidden');
-            document.getElementById('listTitle').innerText = 'Khu vực ' + distName;
-            renderRooms();
-            window.scrollTo(0,0);
-        }
-
-        function renderRooms() {
-            const maxPrice = document.getElementById('priceSlider').value;
-            const container = document.getElementById('room-container');
-            const filtered = ROOMS.filter(r => r.dist === currentDist && r.price <= maxPrice);
-
-            if(filtered.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center py-20 text-slate-400 italic">Hiện tại chưa có phòng phù hợp ở khu vực này...</div>`;
-                return;
-            }
-
-            container.innerHTML = filtered.map(r => `
-                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-                    <img src="${r.img}" class="w-full h-52 object-cover">
-                    <div class="p-6">
-                        <h3 class="font-bold text-lg text-slate-800 italic">${r.addr}</h3>
-                        <p class="text-orange-600 font-black text-2xl my-2">${(r.price/1000000).toFixed(1)} Tr</p>
-                        <button onclick="openModal(${r.id})" class="w-full bg-slate-50 text-slate-700 py-3 rounded-2xl font-bold mt-2 border border-slate-100">Chi tiết dịch vụ</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function toggleDrawer() {
-            document.getElementById('filterDrawer').classList.toggle('open');
-            document.getElementById('drawerOverlay').classList.toggle('hidden');
-            renderRooms();
-        }
-
-        function updatePriceLabel(val) {
-            document.getElementById('priceLabel').innerText = parseInt(val).toLocaleString('vi-VN') + 'đ';
-        }
-
-        function openModal(id) {
-            const r = ROOMS.find(item => item.id === id);
-            document.getElementById('m-title').innerText = r.addr;
-            document.getElementById('m-services').innerHTML = `
-                <div class="flex justify-between p-3 bg-slate-50 rounded-xl"><span>Điện:</span><span class="font-bold text-yellow-600">${r.s.d}</span></div>
-                <div class="flex justify-between p-3 bg-slate-50 rounded-xl"><span>Nước:</span><span class="font-bold text-blue-600">${r.s.n}</span></div>
-                <div class="flex justify-between p-3 bg-slate-50 rounded-xl"><span>Xe:</span><span class="font-bold text-red-600">${r.s.x}</span></div>
-                <div class="flex justify-between p-3 bg-slate-50 rounded-xl"><span>Khác:</span><span class="font-bold text-green-700">${r.s.k}</span></div>
-            `;
-            document.getElementById('infoModal').style.display = "block";
-        }
-
-        function closeModal() { document.getElementById('infoModal').style.display = "none"; }
-        
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('infoModal')) closeModal();
-        }
-
-        init();
-    </script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
